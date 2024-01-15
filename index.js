@@ -1,6 +1,7 @@
 
-const Buttons = document.querySelector(".containerButton");
+
 const Input = document.getElementById("Inputs");
+const Buttons = document.querySelector(".containerButton");
 
 const Toplama = (a, b) => {
   return a + b;
@@ -8,15 +9,15 @@ const Toplama = (a, b) => {
 const Cixma = (a, b) => {
   return a - b;
 };
-const Bolme = (a, b) => {
-  return a / b;
-};
 const Vurma = (a, b) => {
   return a * b;
 };
+const Bolme = (a, b) => {
+  return a / b;
+};
 
-const Hesabla = (a, b, emeliyat) => {
-  switch (emeliyat) {
+const Hesabla = (a, b, deyer) => {
+  switch (deyer) {
     case "+":
       return Toplama(a, b);
     case "-":
@@ -31,19 +32,34 @@ const Hesabla = (a, b, emeliyat) => {
 let birinciEd = "";
 let ikinciEd = "";
 let deyer = "";
-let total = "";
+
+const Clear = () => {
+  birinciEd = "";
+  ikinciEd = "";
+  deyer = "";
+  total = "";
+  Input.value = "";
+};
 
 Buttons.addEventListener("click", (event) => {
-  const Clear = () => {
-    birinciEd = "";
-    ikinciEd = "";
-    deyer = "";
-    total = "";
-    Input.value = "";
-  };
   ButtonText = event.target.innerText;
 
+  const operator = ["+", "-", "*", "/"];
   if (event.target.tagName !== "BUTTON") {
+    return;
+  }
+
+  if (ButtonText === "=" && birinciEd && ikinciEd) {
+    birinciEd = Hesabla(Number(birinciEd), Number(ikinciEd), deyer);
+    Input.value = birinciEd;
+    ikinciEd = "";
+    deyer = "";
+    return;
+  }
+  if (ButtonText === deyer && birinciEd && ikinciEd) {
+    birinciEd = Hesabla(Number(birinciEd), Number(ikinciEd), deyer);
+    Input.value = birinciEd;
+    ikinciEd = "";
     return;
   }
 
@@ -52,39 +68,22 @@ Buttons.addEventListener("click", (event) => {
     return;
   }
 
-  if (["+", "-", "*", "/"].includes(ButtonText) && !birinciEd) {
+  if (operator.includes(ButtonText) && !birinciEd) {
     return;
-  } else if (["+", "-", "*", "/"].includes(ButtonText) && birinciEd) {
-    deyer = ButtonText;
-    Input.value = ButtonText;
-    if (!deyer) {
-      if (ButtonText !== "=") {
-        total += ButtonText;
-        Input.value = total;
-      }
-    }
-  }
-
-  if (ButtonText === "=" && birinciEd && ikinciEd && deyer) {
-    birinciEd = Hesabla(Number(birinciEd), Number(ikinciEd), deyer);
-    Input.value = birinciEd;
-    ikinciEd = "";
-    deyer = "";
-    return;
-  }
-
-  if (["+", "-", "*", "/"].includes(ButtonText)) {
-    deyer = ButtonText;
-    Input.value = deyer;
-  } else if (!deyer) {
-    if (ButtonText !== "=") {
-      birinciEd += ButtonText;
-      Input.value = birinciEd;
-    }
   } else {
-    if (ButtonText !== "=") {
-      ikinciEd += ButtonText;
-      Input.value = ikinciEd;
+    if (operator.includes(ButtonText)) {
+      deyer = ButtonText;
+      Input.value = deyer;
+    } else if (!deyer) {
+      if (ButtonText !== "=") {
+        birinciEd += ButtonText;
+        Input.value = birinciEd;
+      }
+    } else {
+      if (ButtonText !== "=") {
+        ikinciEd += ButtonText;
+        Input.value = ikinciEd;
+      }
     }
   }
 });
